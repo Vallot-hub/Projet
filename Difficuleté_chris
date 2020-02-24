@@ -4,5 +4,5 @@ compteur compt 4 impultion en 1 fois => mise en place d'1 timer entre les impult
 
 
 
-Remplacement 127.0.0.1 par localhost dans phpmyadmin
+Remplacement 127.0.0.1 par localhost dans phpmyadmin utilisateur refusé
 pour la commande mysql -u api --password=snir -e du script

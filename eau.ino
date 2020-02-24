@@ -6,10 +6,13 @@
 const char* ssid     = "snir";
 const char* password = "12345678";
 
+const char* host = "192.168.5.187";
+const uint16_t port = 80;
 
 // mqtt
 const char* mqttServer = "192.168.5.187";
 const int mqttPort = 1883;
+
 //const char* mqttUser = ""; 
 //const char* mqttPassword = "";
 
@@ -26,6 +29,7 @@ int electrovanne = 5;  // pin D1
 int compt=0;
 int Etat_electrovanne=0;                  // 0=fermée  1=ouvert
 void ICACHE_RAM_ATTR nb_impulsion(void);   // ICACHE_RAM_ATTR permet de charger attachInterrupt dans la RAM
+
 void ouverture_electrovanne();
 void fermeture_electrovanne();
 
@@ -37,6 +41,7 @@ void setup()
   pinMode(compteur_eau, INPUT);
   pinMode(electrovanne, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(compteur_eau),nb_impulsion,RISING);   //interruption 
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
  
   while (WiFi.status() != WL_CONNECTED) {
@@ -44,7 +49,11 @@ void setup()
     Serial.println("Connecting to WiFi..");
   }
   Serial.println("Connected to the WiFi network");
- 
+  
+  
+  
+  
+  
   client.setServer(mqttServer, mqttPort);
 
 
@@ -76,8 +85,28 @@ while (!client.connected())
 
 void loop() 
 {
-  Serial.println(compt);
-  client.loop();
+  
+    Serial.println(compt);
+    client.loop();
+    
+    Serial.print("wifi : ");
+    Serial.print(WiFi.status());
+
+    /**  teste de la connexion au server mqtt   **/
+    while (!client.connected()) 
+    {
+      if (client.connect("ESP8266Client"))      //reconnection au broker
+      {
+        Serial.println("connectée au serveur mqtt");  
+      } 
+      else 
+      {
+        Serial.print("failed with state ");
+        Serial.print(client.state());
+        delay(2000);
+      } 
+    }
+  
   char envoi[10];
   char temp[2];
 
@@ -86,11 +115,11 @@ void loop()
   
   String str=String(compt);
   str.toCharArray(envoi,5); 
-  String str2=String(Etat_electrovanne);
-  str2.toCharArray(temp,2);
+  str=String(Etat_electrovanne);
+  str.toCharArray(temp,2);
   strcat(envoi,":");  //ajoute une donneee à la fin du char b
   strcat(envoi,temp);
-  //Serial.println(str2);
+  //Serial.println(envoi);
 
 
 
@@ -103,9 +132,11 @@ void loop()
 
   
   client.publish("compteur_connecte/conso", envoi);
+  String message=client.subscribe("compteur_connecte/toto");
+  Serial.println(message);
   //ouverture_electrovanne();
   fermeture_electrovanne();
-  delay(5000);
+  delay(1000);
   //toutes les minutes
   //ouverture_electrovanne();
   //fermeture_electrovanne();

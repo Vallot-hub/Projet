@@ -1,0 +1,8 @@
+# Projet
+electronic pour la connection du compteur d'eau
+compteur compt 4 impultion en 1 fois
+
+
+
+Remplacement 127.0.0.1 par localhost dans phpmyadmin
+pour la commande mysql -u api --password=snir -e du script

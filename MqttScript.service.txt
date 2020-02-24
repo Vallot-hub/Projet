@@ -1,0 +1,11 @@
+[Unit]
+Description=Transfére les données du broker mosquitto a la base de donnée
+After=mosquitto.service   //démarre aprés mosquitto
+
+[Service]
+Type=simple
+ExecStart=/home/pi/MqttScript.sh   //emplacement du fichier
+
+
+[Install]
+WantedBy=multi-user.target //demarre juste avant le login

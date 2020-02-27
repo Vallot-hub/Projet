@@ -5,6 +5,8 @@ perte de connection wifi apres 10s inutilisé
 convertion int to char
 
 
+alimentation insufisante pour la douchette fournie 0.5A sur 3A
+
 
 Remplacement 127.0.0.1 par localhost dans phpmyadmin utilisateur refusé
 pour la commande mysql -u api --password=snir -e du script

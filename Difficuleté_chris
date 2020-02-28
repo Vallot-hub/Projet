@@ -4,6 +4,8 @@ compteur compt 4 impultion en 1 fois => mise en place d'1 timer entre les impult
 perte de connection wifi apres 10s inutilisé
 convertion int to char
 
+Creation Bouton interface node red 
+Affichage consommation. Difficulté à divisé la variable 12:1
 
 alimentation insufisante pour la douchette fournie 0.5A sur 3A
 

@@ -17,4 +17,4 @@ pour la commande mysql -u api --password=snir -e du script
 installation librairie php :sudo apt install php-pear // sudo apt install php7.3-dev (phpsize)  //  
 sudo apt-get install libmosquitto-dev //  sudo pecl install Mosquitto-alpha
 
-
+detection de fuite : consommation continue

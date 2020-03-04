@@ -15,6 +15,6 @@ Remplacement 127.0.0.1 par localhost dans phpmyadmin utilisateur refusé
 pour la commande mysql -u api --password=snir -e du script
 
 installation librairie php :sudo apt install php-pear // sudo apt install php7.3-dev (phpsize)  //  
-sudo apt-get install libmosquitto-devls //  sudo pecl install Mosquitto-alpha
+sudo apt-get install libmosquitto-dev //  sudo pecl install Mosquitto-alpha
 
 

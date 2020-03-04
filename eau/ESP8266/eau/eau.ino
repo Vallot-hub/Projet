@@ -38,6 +38,16 @@ void envoi_message();
 float debit();
 float debi=0;
 
+
+
+
+
+
+
+
+
+
+
 void callback(char* topic, byte* payload, unsigned int length) {
   char message_buff[100];
   /** Debug **/ 
@@ -149,6 +159,9 @@ void loop()
    }
    debi=debit(compt-dernierlitre,10);
    dernierlitre=compt;
+    dernier
+  
+   
     //Serial.print("wifi : ");
     //Serial.print(WiFi.status());
 

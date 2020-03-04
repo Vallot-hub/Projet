@@ -6,7 +6,7 @@ use Mosquitto\Client;
 function connectionMqtt($message)
 {
 
-define('BROKER', 'localhost');
+define('BROKER', '127.0.0.1');
 define('PORT', 1883);
 define('CLIENT_ID', "pubclient_" + getmypid());
 

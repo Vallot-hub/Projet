@@ -1,7 +1,10 @@
 <?php
 //phpinfo(INFO_MODULES);
+
 use Mosquitto\Client;
 
+function connectionMqtt($message)
+{
 
 define('BROKER', 'localhost');
 define('PORT', 1883);
@@ -9,11 +12,20 @@ define('CLIENT_ID', "pubclient_" + getmypid());
 
 $client = new Mosquitto\Client(CLIENT_ID);
 $client->connect(BROKER, PORT, 60);
-
-while ($client->loop() == 0) {
-	$message = "Test message at " . date("Y-m-d H:i:s");
-	$client->publish('test', $message, 0, false);
-	$client->loop();
-	sleep(1);
+$client->publish('gestion', $message, 0, false);
 }
+
+if ($_GET['electrovanne']==1)
+{
+        $message = "1";
+        connectionMqtt($message);
+
+}
+if ($_GET['electrovanne']==0)
+{
+
+        $message = "0";
+        connectionMqtt($message);
+}
+
 ?>

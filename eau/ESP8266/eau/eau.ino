@@ -23,24 +23,28 @@ const int mqttPort = 1883;
 WiFiClient espClient;  //objet pour le wifi
 PubSubClient client(espClient);  //objet pour le Mqtt
 
+void connection_Mqtt();
 
 int compteur_eau = 4;  // pin D2
 int electrovanne = 5;  // pin D1
 int compt=0;       //contient le nombre de litre/impulsion 
 int Etat_electrovanne=0;                  // 0=fermée  1=ouvert
-int dernierlitre=0;
+int dernier_litre=0;
+
 void ICACHE_RAM_ATTR nb_impulsion(void);   // ICACHE_RAM_ATTR permet de charger attachInterrupt dans la RAM // permet de compter le nombre d'impulsion donc de litre
 
 void ouverture_electrovanne();
 void fermeture_electrovanne();
 
 void envoi_message();
-float debit();
-float debi=0;
 
+float calcul_debit();
+float debit=0;
+float dernier_debit=0;
 
-
-
+int nb_debit=0;
+unsigned long duree;
+unsigned long derniere_duree;
 
 
 
@@ -107,23 +111,8 @@ void setup()
   client.setCallback(callback);   //defini la fonction de retour
 
 /** connection au broker Mqtt**/
-while (!client.connected()) 
-{
-    Serial.println("Connection au broker Mqtt...");
- 
-    if (client.connect("ESP8266Client")) 
-    {
-      Serial.println("Mqtt -OK");  
-    } 
-    else 
-    {
-      Serial.print("erreur au niveau ");
-      Serial.print(client.state());
-      delay(2000);
-    }
-}
 
-
+  connection_Mqtt();
   client.subscribe("gestion");
   
 }
@@ -143,7 +132,50 @@ void loop()
     delay(500);
      
      /* reconnection au broker si elle est perdu */
-     while (!client.connected()) 
+     connection_Mqtt();
+   }
+   duree=millis();
+   debit=calcul_debit(compt-dernier_litre,(duree-derniere_duree)*0.001);
+   Serial.print("debit :");
+   Serial.println(debit);
+   dernier_litre=compt;
+   
+   
+   if (debit==dernier_debit)
+   {
+      nb_debit++;
+   }
+   else
+   {
+    nb_debit=0;
+   }
+
+   
+   Serial.print("nb_debit :");
+   Serial.println(nb_debit);
+   Serial.print("temps :");
+   Serial.println(duree);
+   dernier_debit=debit;
+   derniere_duree=duree;
+    //Serial.print("wifi : ");
+    //Serial.print(WiFi.status());
+
+    /**  teste de la connexion au server mqtt   **/
+    connection_Mqtt();
+  envoi_message();
+}
+
+
+
+float calcul_debit(int litre, float temps)
+{
+    return litre/temps;
+}
+
+
+void connection_Mqtt()
+{
+       while (!client.connected()) 
     {
       if (client.connect("ESP8266Client"))      
       {
@@ -156,37 +188,6 @@ void loop()
         delay(2000);
       } 
     }
-   }
-   debi=debit(compt-dernierlitre,10);
-   dernierlitre=compt;
-    dernier
-  
-   
-    //Serial.print("wifi : ");
-    //Serial.print(WiFi.status());
-
-    /**  teste de la connexion au server mqtt   **/
-    while (!client.connected()) 
-    {
-      if (client.connect("ESP8266Client"))      //reconnection au broker
-      {
-        Serial.println("connectée au serveur mqtt");  
-      } 
-      else 
-      {
-        Serial.print("failed with state ");
-        Serial.print(client.state());
-        delay(2000);
-      } 
-    }
-  envoi_message();
-}
-
-
-
-float debit(int litre, float temps)
-{
-    return litre/temps;
 }
 
 
@@ -201,7 +202,7 @@ void envoi_message()
   str.toCharArray(temp,2);
   strcat(envoi,":");  //ajoute une donneee à la fin du char b
   strcat(envoi,temp);
-  str=String(debi);
+  str=String(debit);
   str.toCharArray(temp,5);
   strcat(envoi,":");  //ajoute une donneee à la fin du char b
   strcat(envoi,temp);
@@ -222,7 +223,6 @@ void ouverture_electrovanne()
   digitalWrite(electrovanne, LOW);    
   Etat_electrovanne = 1;    // 1 :L'electrovanne est ouverte
 }
-
 
 
 

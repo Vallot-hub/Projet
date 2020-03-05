@@ -1,7 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-
 // wifi
 const char* ssid     = "snir";
 const char* password = "12345678";
@@ -52,37 +51,41 @@ unsigned long derniere_duree;
 
 
 
-void callback(char* topic, byte* payload, unsigned int length) {
+void callback(char* topic, byte* payload, unsigned int length)   //rappel
+{
   char message_buff[100];
   /** Debug **/ 
-  Serial.print("Message received in topic: ");
-  Serial.print(topic);
-  Serial.print("   length is:");
-  Serial.println(length);
-  Serial.print("Data Received From Broker:");
-  int i;
-  for (i = 0; i < length; i++) 
+  Serial.print("Message reçu sur le topic : ");  
+  Serial.print(topic);  //affiche le nom du topic
+  Serial.print("   la longueur est :");
+  Serial.println(length);    //affiche la longueur du message
+  Serial.print("donnée reçu du broker :");
+  int i;   //utile pour le for 
+  for (i = 0; i < length; i++) // parcours le tableau
   {
-  message_buff[i] = payload[i];
+  message_buff[i] = payload[i];     //
   }
   message_buff[i] = '\0';  //fin de la chaine
 
-  Serial.println();
+  Serial.println();       //mise en page
   Serial.println("-----------------------");
   Serial.println();
 
-  String msgString = String(message_buff);   //met le message dans un string 
-  Serial.println(msgString);
+  String msgString = String(message_buff);   //convertie le message en string 
+  Serial.println(msgString);   //affiche le message
 
+    
+    
+    
     if (msgString == "1")
     {
-      ouverture_electrovanne();
-      envoi_message();
+      ouverture_electrovanne();  
+      envoi_message();        //envoi un message de confirmation 
     }
     if (msgString == "0")
     {
       fermeture_electrovanne();
-      envoi_message();
+      envoi_message();         //envoi un message de confirmation
     }
   }
 
@@ -92,19 +95,27 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 void setup() 
 {
-  Serial.begin(9600);
-  pinMode(compteur_eau, INPUT);
-  pinMode(electrovanne, OUTPUT);
-  attachInterrupt(digitalPinToInterrupt(compteur_eau),nb_impulsion,RISING);   //interruption 
+  
+  Serial.begin(9600); // communique avec 9600 baud (vitesse de communication)
+  pinMode(compteur_eau, INPUT);   //compteur d'eau brancher sur la pin D2 
+  pinMode(electrovanne, OUTPUT);    //electrovanne brancher sur la pin D1
+  attachInterrupt(digitalPinToInterrupt(compteur_eau),nb_impulsion,RISING);   //interruption lors qu'il y a front montant
+  
+  
+  
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
  
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) 
+  {
     delay(500);
-    Serial.println("Connecting to WiFi..");
+    Serial.println("Connection au WiFi..");
   }
-  Serial.println("Connected to the WiFi network");
-  
+  Serial.println("Connectée au réseau WiFi");
+
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
   
   
   client.setServer(mqttServer, mqttPort);   //definition du server Mqtt
@@ -124,7 +135,7 @@ void setup()
 void loop() 
 {
   
-    Serial.println(compt);
+    //Serial.println(compt);
     
     for(int i = 0; i<20 ;i++)
    {
@@ -162,7 +173,7 @@ void loop()
 
     /**  teste de la connexion au server mqtt   **/
     connection_Mqtt();
-  envoi_message();
+    envoi_message();
 }
 
 
@@ -173,22 +184,27 @@ float calcul_debit(int litre, float temps)
 }
 
 
+
+
 void connection_Mqtt()
 {
-       while (!client.connected()) 
+       while (!client.connected()) // tant que le client n'est pas connecté
     {
-      if (client.connect("ESP8266Client"))      
+      if (client.connect("ESP8266Client"))   //  connection au broker Mqtt  
       {
-        Serial.println("connectée au serveur mqtt");  
+        Serial.println("connectée au serveur mqtt");  // affiche par l'USB que l'on est connecté
       } 
-      else 
+      else                        // si non 
       {
-        Serial.print("failed with state ");
-        Serial.print(client.state());
-        delay(2000);
+        Serial.print("Erreur Mqtt au niveau : ");  // affiche l'erreur 
+        Serial.println(client.state());   // info debloquage + ln=retour à la ligne
+        delay(2000);  //  attend 2000ms=2s
       } 
     }
 }
+
+
+
 
 
 void envoi_message()
@@ -200,17 +216,18 @@ void envoi_message()
   str.toCharArray(envoi,5); 
   str=String(Etat_electrovanne);
   str.toCharArray(temp,2);
-  strcat(envoi,":");  //ajoute une donneee à la fin du char b
+  strcat(envoi,":");  //ajoute une donneee à la fin du char envoi
   strcat(envoi,temp);
   str=String(debit);
   str.toCharArray(temp,5);
-  strcat(envoi,":");  //ajoute une donneee à la fin du char b
+  strcat(envoi,":");  //ajoute une donneee à la fin du char envoi
   strcat(envoi,temp);
   Serial.println(envoi);
 
 
-//format de l'envoie en Mqtt         "5:0"
-//............................nb_litre : etat_electrovanne.........................//
+//format de l'envoie en Mqtt                "5:0:1.54"
+//............................nb_litre : etat_electrovanne : debit sur 10s.........................//
+  
   client.publish("compteur_connecte/conso", envoi);
 }
 
@@ -220,7 +237,7 @@ void envoi_message()
 
 void ouverture_electrovanne()
 {
-  digitalWrite(electrovanne, LOW);    
+  digitalWrite(electrovanne, LOW);  //signal continu = 0V  
   Etat_electrovanne = 1;    // 1 :L'electrovanne est ouverte
 }
 
@@ -231,7 +248,7 @@ void ouverture_electrovanne()
 
 void fermeture_electrovanne()
 {
-  digitalWrite(electrovanne, HIGH); 
+  digitalWrite(electrovanne, HIGH);   //signal continu = 3,3V
   Etat_electrovanne = 0;    // 0 :L'electrovanne est fermé
 }
 
@@ -239,7 +256,7 @@ void fermeture_electrovanne()
 
 
 
-void ICACHE_RAM_ATTR nb_impulsion(void)
+void ICACHE_RAM_ATTR nb_impulsion(void)   // ICACHE_RAM_ATTR permet de charger attachInterrupt dans la RAM // permet de compter le nombre d'impulsions
 {
   static unsigned long dernier_temps=0; 
   unsigned long temps = millis();

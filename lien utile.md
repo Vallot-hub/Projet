@@ -1,5 +1,5 @@
 # Projet
-api_rest : https://www.youtube.com/watch?v=vzweSIHojyk
+api_rest : https://www.youtube.com/watch?v=vzweSIHojyk (1er partie)
 
 api Mqtt : https://github.com/mgdm/Mosquitto-PHP
 

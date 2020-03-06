@@ -3,11 +3,11 @@
 #include <PubSubClient.h>
 
 #include <SPI.h>
-#include <U8g2lib.h>
+
 
 // wifi
 const char* ssid     = "snir";
-const char* password = "12345678";
+const char* password = "12345678"; 
 
 //const char* host = "192.168.5.187";
 //const uint16_t port = 80;
@@ -48,7 +48,7 @@ float dernier_debit=0;
 int nb_debit=0;
 unsigned long duree;
 unsigned long derniere_duree;
-U8G2_SH1107_64X128_1_4W_HW_SPI u8g2(U8G2_R1, 14, 27, 33);
+//U8G2_SH1107_64X128_1_4W_HW_SPI u8g2(U8G2_R1, 14, 27, 33);
 //xTaskCreatePinnedToCore(compositeCore, "c", 2048, NULL, 1, NULL, 0);
 String message = "";
 
@@ -114,6 +114,7 @@ void setup()
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.println("Connection au WiFi..");
+    //M5.Lcd.println("connection au WiFi...");
   }
   Serial.println("Connectée au réseau WiFi");
 
@@ -221,15 +222,15 @@ void envoi_message()
   String msg = "test";
   char envoi[10]="";
   char temp[5];
-  msg=String(compt);
+  msg =String(compt);
+  msg.toCharArray(temp,5);
   strcat(envoi,temp);
   strcat(envoi,":");//ajoute une donneee à la fin du char envoi
-  
+  msg =String(Etat_electrovanne);
+  msg.toCharArray(temp,5);
   
   strcat(envoi,temp);
   msg=String(debit);
-  M5.Lcd.print("debit : ");
-  M5.Lcd.println(debit);
   msg.toCharArray(temp,5);
   strcat(envoi,":");  //ajoute une donneee à la fin du char envoi
   strcat(envoi,temp);
@@ -238,7 +239,8 @@ void envoi_message()
   
 //format de l'envoie en Mqtt                "5:0:1.54"
 //............................nb_litre : etat_electrovanne : debit sur 10s.........................//
-  
+  M5.Lcd.print("envoi : ");
+  M5.Lcd.println(envoi);
   Mqtt_client.publish("compteur_connecte/conso", envoi);
 }
 

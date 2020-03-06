@@ -2,6 +2,9 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
+#include <SPI.h>
+#include <U8g2lib.h>
+
 // wifi
 const char* ssid     = "snir";
 const char* password = "12345678";
@@ -10,8 +13,8 @@ const char* password = "12345678";
 //const uint16_t port = 80;
 
 // mqtt
-const char* mqttServer = "192.168.5.187";
-const int mqttPort = 1883;
+const char* mqtt_host = "192.168.5.187";
+const int mqtt_port = 1883;
 
 //const char* mqttUser = ""; 
 //const char* mqttPassword = "";
@@ -20,8 +23,8 @@ const int mqttPort = 1883;
 
 
 
-WiFiClient espClient;  //objet pour le wifi
-PubSubClient client(espClient);  //objet pour le Mqtt
+WiFiClient wifi_client;  //objet pour le wifi
+PubSubClient Mqtt_client(mqtt_host, mqtt_port, nullptr, wifi_client);;  //objet pour le Mqtt
 
 void connection_Mqtt();
 
@@ -38,16 +41,16 @@ void fermeture_electrovanne();
 
 void envoi_message();
 
-float calcul_debit();
+float calcul_debit(int litre, float temps);
 float debit=0;
 float dernier_debit=0;
 
 int nb_debit=0;
 unsigned long duree;
 unsigned long derniere_duree;
-
-
-
+U8G2_SH1107_64X128_1_4W_HW_SPI u8g2(U8G2_R1, 14, 27, 33);
+//xTaskCreatePinnedToCore(compositeCore, "c", 2048, NULL, 1, NULL, 0);
+String message = "";
 
 
 
@@ -97,6 +100,7 @@ void callback(char* topic, byte* payload, unsigned int length)   //rappel
 void setup() 
 {
   M5.begin();
+  Serial.begin(115200);
   //Serial.begin(9600); // communique avec 9600 baud (vitesse de communication)
   pinMode(compteur_eau, INPUT);   //compteur d'eau brancher sur la pin D2 
   pinMode(electrovanne, OUTPUT);    //electrovanne brancher sur la pin D1
@@ -113,17 +117,17 @@ void setup()
   }
   Serial.println("Connectée au réseau WiFi");
 
-  M5.Lcd.print("hello world !!!!");
-  M5.Lcd.print("genial !!!!!");
+  M5.Lcd.println("hello world !!!! ");
+  M5.Lcd.print(WiFi.localIP());
   
   
-  client.setServer(mqttServer, mqttPort);   //definition du server Mqtt
-  client.setCallback(callback);   //defini la fonction de retour
+  //client.setServer(mqttServer, mqttPort);   //definition du server Mqtt
+  Mqtt_client.setCallback(callback);   //defini la fonction de retour
 
 /** connection au broker Mqtt**/
 
   connection_Mqtt();
-  client.subscribe("gestion");
+  Mqtt_client.subscribe("gestion");
   
 }
 
@@ -138,7 +142,7 @@ void loop()
     
     for(int i = 0; i<20 ;i++)
    {
-    client.loop();
+    Mqtt_client.loop();
     delay(500);
      
      /* reconnection au broker si elle est perdu */
@@ -187,16 +191,16 @@ float calcul_debit(int litre, float temps)
 
 void connection_Mqtt()
 {
-       while (!client.connected()) // tant que le client n'est pas connecté
+       while (!Mqtt_client.connected()) // tant que le client n'est pas connecté
     {
-      if (client.connect("ESP8266Client"))   //  connection au broker Mqtt  
+      if (Mqtt_client.connect("ESP8266Client"))   //  connection au broker Mqtt  
       {
         Serial.println("connectée au serveur mqtt");  // affiche par l'USB que l'on est connecté
       } 
       else                        // si non 
       {
         Serial.print("Erreur au niveau : ");  // affiche l'erreur 
-        Serial.println(client.state());   // info debloquage + ln=retour à la ligne
+        Serial.println(Mqtt_client.state());   // info debloquage + ln=retour à la ligne
         delay(2000);  //  attend 2000ms=2s
       } 
     }
@@ -209,25 +213,33 @@ void connection_Mqtt()
 void envoi_message()
 {
     /*conversion de int en char*/
-  char envoi[10];
-  char temp[2];
-  String str=String(compt);
-  str.toCharArray(envoi,5); 
-  str=String(Etat_electrovanne);
-  str.toCharArray(temp,2);
-  strcat(envoi,":");  //ajoute une donneee à la fin du char envoi
+  //int num = 1234;
+  
+
+  //itoa(num, cstr, 10);
+
+  String msg = "test";
+  char envoi[10]="";
+  char temp[5];
+  msg=String(compt);
   strcat(envoi,temp);
-  str=String(debit);
-  str.toCharArray(temp,5);
+  strcat(envoi,":");//ajoute une donneee à la fin du char envoi
+  
+  
+  strcat(envoi,temp);
+  msg=String(debit);
+  M5.Lcd.print("debit : ");
+  M5.Lcd.println(debit);
+  msg.toCharArray(temp,5);
   strcat(envoi,":");  //ajoute une donneee à la fin du char envoi
   strcat(envoi,temp);
   Serial.println(envoi);
 
-
+  
 //format de l'envoie en Mqtt                "5:0:1.54"
 //............................nb_litre : etat_electrovanne : debit sur 10s.........................//
   
-  client.publish("compteur_connecte/conso", envoi);
+  Mqtt_client.publish("compteur_connecte/conso", envoi);
 }
 
 

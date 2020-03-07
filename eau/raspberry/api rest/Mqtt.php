@@ -15,13 +15,13 @@ $client->connect(BROKER, PORT, 60);
 $client->publish('gestion', $message, 0, false);
 }
 
-if ($_GET['electrovanne']==1)
+if ($_GET['Etat_electrovanne']==1)
 {
         $message = "1";
         connectionMqtt($message);
 
 }
-if ($_GET['electrovanne']==0)
+if ($_GET['Etat_electrovanne']==0)
 {
 
         $message = "0";

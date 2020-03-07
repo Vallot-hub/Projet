@@ -8,9 +8,10 @@ do
 
 
 #echo $donnee                         //test
-Compteur=$(echo $donnee | cut -d: -f1)
-Electrovanne=$(echo $donnee | cut -d: -f2)
-Debit=$(echo $donnee | cut -d: -f3)
+
+Compteur=$(echo $donnee | cut -d: -f1)     #prend que la 1er partie de la variable donnée (ce qu'il y a avant les :)
+Electrovanne=$(echo $donnee | cut -d: -f2)   #prend que la 2éme partie de la variable donnée
+Debit=$(echo $donnee | cut -d: -f3)			#prend que la 3éme partie de la variable donnée
 
 #echo $Compteur et $Electrovanne          //test
 

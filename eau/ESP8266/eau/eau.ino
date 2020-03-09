@@ -12,8 +12,8 @@ const char* password = "12345678";
 const char* mqttServer = "192.168.5.187";
 const int mqttPort = 1883;
 
-//const char* mqttUser = ""; 
-//const char* mqttPassword = "";
+const char* mqttUser = ""; 
+const char* mqttPassword = "";
 
 
 
@@ -75,8 +75,7 @@ void callback(char* topic, byte* payload, unsigned int length)   //rappel
   Serial.println(msgString);   //affiche le message
 
     
-    
-    
+    //envoi_message(); 
     if (msgString == "1")
     {
       ouverture_electrovanne();  
@@ -85,7 +84,7 @@ void callback(char* topic, byte* payload, unsigned int length)   //rappel
     if (msgString == "0")
     {
       fermeture_electrovanne();
-      envoi_message();         //envoi un message de confirmation
+      envoi_message();        //envoi un message de confirmation
     }
   }
 
@@ -134,17 +133,20 @@ void setup()
 
 void loop() 
 {
-  
+    while (WiFi.status() != WL_CONNECTED) 
+  {
+    delay(500);
+    Serial.println("Connection au WiFi..");
+  }
+   connection_Mqtt();
     //Serial.println(compt);
-    
     for(int i = 0; i<20 ;i++)
    {
+    /* reconnection au broker si elle est perdu */
     client.loop();
     delay(500);
-     
-     /* reconnection au broker si elle est perdu */
-     connection_Mqtt();
    }
+   
    duree=millis();
    debit=calcul_debit(compt-dernier_litre,(duree-derniere_duree)*0.001);
    Serial.print("debit :");
@@ -188,7 +190,7 @@ float calcul_debit(int litre, float temps)
 
 void connection_Mqtt()
 {
-       while (!client.connected()) // tant que le client n'est pas connecté
+    while (!client.connected()) // tant que le client n'est pas connecté
     {
       if (client.connect("ESP8266Client"))   //  connection au broker Mqtt  
       {
@@ -237,8 +239,8 @@ void envoi_message()
 
 void ouverture_electrovanne()
 {
-  digitalWrite(electrovanne, LOW);  //signal continu = 0V  
-  Etat_electrovanne = 1;    // 1 :L'electrovanne est ouverte
+  digitalWrite(electrovanne, HIGH);  //signal continu = 3.3V  
+  Etat_electrovanne = 1;    // 1 :L'electrovanne est ouverte (l'eau ne peux)
 }
 
 
@@ -248,7 +250,7 @@ void ouverture_electrovanne()
 
 void fermeture_electrovanne()
 {
-  digitalWrite(electrovanne, HIGH);   //signal continu = 3,3V
+  digitalWrite(electrovanne, LOW);   //signal continu = 0V
   Etat_electrovanne = 0;    // 0 :L'electrovanne est fermé
 }
 

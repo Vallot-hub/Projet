@@ -2,7 +2,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-#include <SPI.h>
+//#include <SPI.h>
 
 
 // wifi
@@ -28,7 +28,7 @@ PubSubClient Mqtt_client(mqtt_host, mqtt_port, nullptr, wifi_client);;  //objet 
 
 void connection_Mqtt();
 
-int compteur_eau = 4;  // pin D2
+int compteur_eau = 26;  // pin D2
 int electrovanne = 5;  // pin D1
 int compt=0;       //contient le nombre de litre/impulsion 
 int Etat_electrovanne=0;                  // 0=fermée  1=ouvert
@@ -116,10 +116,18 @@ void setup()
     Serial.println("Connection au WiFi..");
     //M5.Lcd.println("connection au WiFi...");
   }
+  char chaine[20]  = "Salut ";
   Serial.println("Connectée au réseau WiFi");
+  
+  
+  //M5.Lcd.drawChar(0, 0, chaine[0], 0xF800, 0,255,160);
+  M5.Lcd.setTextColor(0xFFFF,0);
 
-  M5.Lcd.println("hello world !!!! ");
-  M5.Lcd.print(WiFi.localIP());
+
+  
+  //M5.Lcd.drawJpg("/IMG_20191213_120859 bis.jpg",  100, 0, 0);
+  //M5.Lcd.println("hello world !!!! ");
+  //M5.Lcd.print(WiFi.localIP());
   
   
   //client.setServer(mqttServer, mqttPort);   //definition du server Mqtt

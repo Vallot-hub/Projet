@@ -136,7 +136,7 @@ void setup()
 /** connection au broker Mqtt**/
 
   connection_Mqtt();
-  Mqtt_client.subscribe("gestion");
+ 
   
 }
 
@@ -205,6 +205,7 @@ void connection_Mqtt()
       if (Mqtt_client.connect("ESP8266Client"))   //  connection au broker Mqtt  
       {
         Serial.println("connectée au serveur mqtt");  // affiche par l'USB que l'on est connecté
+        Mqtt_client.subscribe("gestion");
       } 
       else                        // si non 
       {

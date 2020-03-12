@@ -16,18 +16,36 @@ echo "Echec de la connexion: ".$base_donne->connect_error;   //message d'erreur
 }
 
 
-if ($_GET==NULL)   //Regarde le comptenue de la variable POST. Si vide lit toute la base de donnée
+if (isset($_GET['Id']))   //Regarde le comptenue de la variable GET. Si vide lit toute la base de donnée
 {
-    $requete = "SELECT * FROM Eau;";  //Requéte général
+    $requete = "SELECT * FROM `Eau` WHERE Id='$_GET[Id]'; ";
+
 }
-else if ($_GET['Conso']!=NULL)
+else if (isset($_GET['Conso']))
 {
     $requete = "SELECT * FROM `Eau` WHERE Conso='$_GET[Conso]'; ";
 }
-else if ($_GET['Electrovanne']!=NULL)
+
+else if (isset($_GET['Electrovanne']))
 {
     $requete = "SELECT * FROM `Eau` WHERE Electrovanne='$_GET[Electrovanne]'; ";
 }
+
+else if (isset($_GET['Debit']))
+{
+    $requete = "SELECT * FROM `Eau` WHERE Electrovanne='$_GET[Debit]'; ";
+}
+
+else if (isset($_GET['Date']))
+{
+    $requete = "SELECT * FROM `Eau` WHERE Electrovanne='$_GET[Date]'; ";
+}
+
+else
+{
+    $requete = "SELECT * FROM Eau;"; //Requéte général
+}
+
 $reçu = $base_donne->query($requete);
 
 

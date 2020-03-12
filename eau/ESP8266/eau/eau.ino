@@ -39,7 +39,7 @@ void envoi_message();
 
 float calcul_debit();
 float debit=0;
-float dernier_debit=0;
+float dernier_debit=0;²
 
 int nb_debit=0;
 unsigned long duree;

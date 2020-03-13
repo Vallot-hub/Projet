@@ -8,15 +8,16 @@ do
 
 
 #echo $donnee                         //test
-
-Compteur=$(echo $donnee | cut -d: -f1)     #prend que la 1er partie de la variable donnée (ce qu'il y a avant les :)
-Electrovanne=$(echo $donnee | cut -d: -f2)   #prend que la 2éme partie de la variable donnée
-Debit=$(echo $donnee | cut -d: -f3)			#prend que la 3éme partie de la variable donnée
+Compteur=$(echo $donnee | cut -d: -f1)
+Electrovanne=$(echo $donnee | cut -d: -f2)
+Debit=$(echo $donnee | cut -d: -f3)
 
 #echo $Compteur et $Electrovanne          //test
 
 #Ce connecte à la base de donnée a l'aide de la commande mysql(mysql -u root --password=root -e) et sql(USE Projet; INSERT INTO Eau (Conso,Total,Electrovanne) VALUES ($donnee,2,1);)
 
-mysql -u api --password=snir -e "USE Projet; INSERT INTO Eau (Conso,Total,Electrovanne) VALUES ($Compteur,$Debit,$Electrovanne);"
+mysql -u api --password=snir -e "USE Projet; INSERT INTO Eau (Conso,Debit,Electrovanne) VALUES ($Compteur,$Debit,$Electrovanne);"
 
 done
+
+

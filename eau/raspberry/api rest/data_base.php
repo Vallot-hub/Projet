@@ -57,7 +57,13 @@ if($reçu->num_rows>0)  //Si on reçoit quelle que chose
         $i++;
     }
 }
-
+else
+{
+    $resultat=NULL;
+}
 
 $base_donne->close();
 ?>
+
+
+

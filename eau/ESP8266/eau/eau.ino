@@ -2,14 +2,14 @@
 #include <PubSubClient.h>
 
 // wifi
-const char* ssid     = "snir";
-const char* password = "12345678";
+const char* ssid     = "Livebox-3002";
+const char* password = "aSzy24ZzWm5xrKrumG";
 
 //const char* host = "192.168.5.187";
 //const uint16_t port = 80;
 
 // mqtt
-const char* mqttServer = "192.168.5.187";
+const char* mqttServer = "192.168.1.17";
 const int mqttPort = 1883;
 
 const char* mqttUser = ""; 
@@ -39,7 +39,7 @@ void envoi_message();
 
 float calcul_debit();
 float debit=0;
-float dernier_debit=0;²
+float dernier_debit=0;
 
 int nb_debit=0;
 unsigned long duree;

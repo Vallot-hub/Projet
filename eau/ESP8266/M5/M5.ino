@@ -6,8 +6,8 @@
 
 
 // wifi
-const char* ssid     = "snir";
-const char* password = "12345678"; 
+const char* ssid     = "Livebox-3002";
+const char* password = "aSzy24ZzWm5xrKrumG"; 
 
 //const char* host = "192.168.5.187";
 //const uint16_t port = 80;
@@ -114,11 +114,11 @@ void setup()
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.println("Connection au WiFi..");
-    //M5.Lcd.println("connection au WiFi...");
+    M5.Lcd.println("connection au WiFi...");
   }
   char chaine[20]  = "Salut ";
   Serial.println("Connectée au réseau WiFi");
-  
+  //M5.Lcd.println()
   
   //M5.Lcd.drawChar(0, 0, chaine[0], 0xF800, 0,255,160);
   M5.Lcd.setTextColor(0xFFFF,0);
@@ -127,7 +127,7 @@ void setup()
   
   //M5.Lcd.drawJpg("/IMG_20191213_120859 bis.jpg",  100, 0, 0);
   //M5.Lcd.println("hello world !!!! ");
-  //M5.Lcd.print(WiFi.localIP());
+  M5.Lcd.print(WiFi.localIP());
   
   
   //client.setServer(mqttServer, mqttPort);   //definition du server Mqtt

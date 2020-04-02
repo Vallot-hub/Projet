@@ -14,17 +14,19 @@ $client = new Mosquitto\Client(CLIENT_ID);
 $client->connect(BROKER, PORT, 60);
 $client->publish('gestion', $message, 0, false);
 }
-
-if ($_GET['Etat_electrovanne']==1)
+//echo htmlspecialchars($_POST['Etat_electrovanne']);
+if ($_POST['Etat_electrovanne']==1)
 {
         $message = "1";
+        //echo "ok -1";
         connectionMqtt($message);
 
 }
-if ($_GET['Etat_electrovanne']==0)
+if ($_POST['Etat_electrovanne']==0)
 {
 
         $message = "0";
+        //echo "ok -0";
         connectionMqtt($message);
 }
 

@@ -9,7 +9,7 @@ const char* password = "aSzy24ZzWm5xrKrumG";
 //const uint16_t port = 80;
 
 // mqtt
-const char* mqttServer = "192.168.1.17";
+const char* mqttServer = "90.3.11.137";
 const int mqttPort = 1883;
 
 const char* mqttUser = ""; 

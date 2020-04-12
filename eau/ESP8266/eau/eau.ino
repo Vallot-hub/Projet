@@ -5,9 +5,6 @@
 const char* ssid     = "Livebox-3002";
 const char* password = "aSzy24ZzWm5xrKrumG";
 
-//const char* host = "192.168.5.187";
-//const uint16_t port = 80;
-
 // mqtt
 const char* mqttServer = "90.3.11.137";
 const int mqttPort = 1883;
@@ -67,9 +64,6 @@ void callback(char* topic, byte* payload, unsigned int length)   //rappel
   }
   message_buff[i] = '\0';  //fin de la chaine
 
-  Serial.println();       //mise en page
-  Serial.println("-----------------------");
-  Serial.println();
 
   String msgString = String(message_buff);   //convertie le message en string 
   Serial.println(msgString);   //affiche le message

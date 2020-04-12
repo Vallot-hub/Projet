@@ -9,11 +9,8 @@
 const char* ssid     = "Livebox-3002";
 const char* password = "aSzy24ZzWm5xrKrumG"; 
 
-//const char* host = "192.168.5.187";
-//const uint16_t port = 80;
-
 // mqtt
-const char* mqtt_host = "192.168.5.187";
+const char* mqtt_host = "90.3.11.137";
 const int mqtt_port = 1883;
 
 //const char* mqttUser = ""; 
@@ -24,10 +21,10 @@ const int mqtt_port = 1883;
 
 
 WiFiClient wifi_client;  //objet pour le wifi
-PubSubClient Mqtt_client(mqtt_host, mqtt_port, nullptr, wifi_client);;  //objet pour le Mqtt
+PubSubClient Mqtt_client(mqtt_host, mqtt_port, nullptr, wifi_client);  //objet pour le Mqtt
 
 void connection_Mqtt();
-
+int n_menu=0;
 int compteur_eau = 26;  // pin D2
 int electrovanne = 5;  // pin D1
 int compt=0;       //contient le nombre de litre/impulsion 
@@ -38,6 +35,11 @@ void ICACHE_RAM_ATTR nb_impulsion(void);   // ICACHE_RAM_ATTR permet de charger 
 
 void ouverture_electrovanne();
 void fermeture_electrovanne();
+
+void menu();
+void menu_info(); 
+void menu_conn();
+
 
 void envoi_message();
 
@@ -71,26 +73,32 @@ void callback(char* topic, byte* payload, unsigned int length)   //rappel
   }
   message_buff[i] = '\0';  //fin de la chaine
 
-  Serial.println();       //mise en page
-  Serial.println("-----------------------");
-  Serial.println();
 
   String msgString = String(message_buff);   //convertie le message en string 
   Serial.println(msgString);   //affiche le message
 
     
-    
-    
+    M5.Lcd.setCursor(40, 30);
+    M5.Lcd.setTextSize(1);
     if (msgString == "1")
     {
       ouverture_electrovanne();  
-      envoi_message();        //envoi un message de confirmation 
+      envoi_message();        //envoi un message de confirmation
+      M5.Lcd.setTextColor(WHITE, BLUE);
+      M5.Lcd.fillScreen(BLUE);
+      M5.Lcd.println("circuit ferme"); 
     }
     if (msgString == "0")
     {
       fermeture_electrovanne();
-      envoi_message();         //envoi un message de confirmation
+      envoi_message();   //envoi un message de confirmation
+      M5.Lcd.setTextColor(WHITE, RED);
+      M5.Lcd.fillScreen(RED);
+      M5.Lcd.println("circuit ouvert");
     }
+    delay(1000);
+    menu();
+    
   }
 
 
@@ -100,8 +108,10 @@ void callback(char* topic, byte* payload, unsigned int length)   //rappel
 void setup() 
 {
   M5.begin();
-  Serial.begin(115200);
-  //Serial.begin(9600); // communique avec 9600 baud (vitesse de communication)
+  M5.Lcd.fillScreen(TFT_BLACK);
+  M5.Lcd.setTextColor(WHITE,BLACK);
+  M5.Lcd.setRotation(3);  //format paysage
+  Serial.begin(115200);    // communique avec 115200 baud (vitesse de communication)
   pinMode(compteur_eau, INPUT);   //compteur d'eau brancher sur la pin D2 
   pinMode(electrovanne, OUTPUT);    //electrovanne brancher sur la pin D1
   attachInterrupt(digitalPinToInterrupt(compteur_eau),nb_impulsion,RISING);   //interruption lors qu'il y a front montant
@@ -110,32 +120,39 @@ void setup()
   
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
- 
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+    M5.Lcd.setCursor(0, 0);
+    Serial.print("Connection au WiFi : ");
+    Serial.println(WiFi.status());
+    M5.Lcd.print("Connection au WiFi : ");
+    M5.Lcd.println(WiFi.status());
     delay(500);
-    Serial.println("Connection au WiFi..");
-    M5.Lcd.println("connection au WiFi...");
   }
-  char chaine[20]  = "Salut ";
+  
+  M5.Lcd.fillScreen(TFT_BLACK);
   Serial.println("Connectée au réseau WiFi");
   //M5.Lcd.println()
   
   //M5.Lcd.drawChar(0, 0, chaine[0], 0xF800, 0,255,160);
-  M5.Lcd.setTextColor(0xFFFF,0);
+ 
 
 
   
   //M5.Lcd.drawJpg("/IMG_20191213_120859 bis.jpg",  100, 0, 0);
   //M5.Lcd.println("hello world !!!! ");
-  M5.Lcd.print(WiFi.localIP());
+  //M5.Lcd.fillScreen(TFT_BLACK);
+  //M5.Lcd.print(WiFi.localIP());
   
   
   //client.setServer(mqttServer, mqttPort);   //definition du server Mqtt
   Mqtt_client.setCallback(callback);   //defini la fonction de retour
 
 /** connection au broker Mqtt**/
-
+  
   connection_Mqtt();
+  menu();
+  
  
   
 }
@@ -151,9 +168,25 @@ void loop()
     
     for(int i = 0; i<20 ;i++)
    {
+    M5.update();
     Mqtt_client.loop();
-    delay(500);
-     
+    delay(20);
+    if(M5.BtnB.wasPressed())
+    {
+      if (n_menu>0)
+      {
+        n_menu=0;  
+      }
+      else
+      {
+      n_menu++;
+      }
+      menu();
+    }
+    if(M5.BtnA.wasPressed())
+    {
+      
+    }
      /* reconnection au broker si elle est perdu */
      connection_Mqtt();
    }
@@ -209,8 +242,12 @@ void connection_Mqtt()
       } 
       else                        // si non 
       {
+        int etat=Mqtt_client.state();
         Serial.print("Erreur au niveau : ");  // affiche l'erreur 
-        Serial.println(Mqtt_client.state());   // info debloquage + ln=retour à la ligne
+        Serial.println(etat);   // info debloquage + ln=retour à la ligne
+        M5.Lcd.setCursor(0, 0, 2);
+        M5.Lcd.print("Erreur Mqtt : ");
+        M5.Lcd.println(etat);
         delay(2000);  //  attend 2000ms=2s
       } 
     }
@@ -231,11 +268,11 @@ void envoi_message()
   String msg = "test";
   char envoi[10]="";
   char temp[5];
-  msg =String(compt);
+  msg=String(compt);
   msg.toCharArray(temp,5);
   strcat(envoi,temp);
   strcat(envoi,":");//ajoute une donneee à la fin du char envoi
-  msg =String(Etat_electrovanne);
+  msg = String(Etat_electrovanne);
   msg.toCharArray(temp,5);
   
   strcat(envoi,temp);
@@ -248,14 +285,64 @@ void envoi_message()
   
 //format de l'envoie en Mqtt                "5:0:1.54"
 //............................nb_litre : etat_electrovanne : debit sur 10s.........................//
-  M5.Lcd.print("envoi : ");
-  M5.Lcd.println(envoi);
+  
+
   Mqtt_client.publish("compteur_connecte/conso", envoi);
 }
+void menu()
+{
+  M5.Lcd.fillScreen(TFT_BLACK); //efface l'écrant
+  switch(n_menu)
+  {
+    case 0:
+    menu_info();
+    break;
+    case 1:
+    menu_conn();
+    break;
+    
+    
+  }
+}
 
+void menu_info()
+{
+  M5.Lcd.setTextColor(WHITE, BLACK);
+  M5.Lcd.setCursor(0, 0, 2);
+  M5.Lcd.print("Consommation : ");
+  M5.Lcd.println(compt);
+  M5.Lcd.print("Electrovanne : ");
+  M5.Lcd.println(Etat_electrovanne);
+  M5.Lcd.print("Debit : ");
+  M5.Lcd.println(debit);
+  //M5.Lcd.drawString("X",40,120,2);
+}
 
-
-
+void menu_conn()
+{
+  M5.Lcd.setTextColor(WHITE, BLACK);
+  M5.Lcd.setCursor(0, 0, 2);
+  M5.Lcd.print("WiFi : ");
+  M5.Lcd.println("OK");
+  M5.Lcd.print("Mqtt : ");
+  M5.Lcd.println("OK");
+  M5.Lcd.print("Ip : ");
+  M5.Lcd.println(WiFi.localIP());
+  byte mac[6];
+  WiFi.macAddress(mac);
+  M5.Lcd.print("Mac : ");
+  M5.Lcd.print(mac[5],HEX);
+  M5.Lcd.print(":");
+  M5.Lcd.print(mac[4],HEX);
+  M5.Lcd.print(":");
+  M5.Lcd.print(mac[3],HEX);
+  M5.Lcd.print(":");
+  M5.Lcd.print(mac[2],HEX);
+  M5.Lcd.print(":");
+  M5.Lcd.print(mac[1],HEX);
+  M5.Lcd.print(":");
+  M5.Lcd.println(mac[0],HEX);
+}
 
 void ouverture_electrovanne()
 {

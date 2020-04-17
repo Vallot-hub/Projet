@@ -6,7 +6,7 @@ const char* ssid     = "Livebox-3002";
 const char* password = "aSzy24ZzWm5xrKrumG";
 
 // mqtt
-const char* mqttServer = "90.3.11.137";
+const char* mqttServer = "86.252.154.141";
 const int mqttPort = 1883;
 
 const char* mqttUser = ""; 

@@ -18,32 +18,32 @@ echo "Echec de la connexion: ".$base_donne->connect_error;   //message d'erreur
 
 if (isset($_GET['Id']))   //Regarde le comptenue de la variable GET. Si vide lit toute la base de donnée
 {
-    $requete = "SELECT * FROM `Eau` WHERE Id='$_GET[Id]'; ";
+    $requete = "SELECT Id,Date,Conso,Debit FROM `Eau` WHERE Id='$_GET[Id]'; ";
 
 }
 else if (isset($_GET['Conso']))
 {
-    $requete = "SELECT * FROM `Eau` WHERE Conso='$_GET[Conso]'; ";
+    $requete = "SELECT Id,Date,Conso,Debit FROM `Eau` WHERE Conso='$_GET[Conso]'; ";
 }
 
 else if (isset($_GET['Electrovanne']))
 {
-    $requete = "SELECT * FROM `Eau` WHERE Electrovanne='$_GET[Electrovanne]'; ";
+    $requete = "SELECT Id,Date,Conso,Debit FROM `Eau` WHERE Electrovanne='$_GET[Electrovanne]'; ";
 }
 
 else if (isset($_GET['Debit']))
 {
-    $requete = "SELECT * FROM `Eau` WHERE Electrovanne='$_GET[Debit]'; ";
+    $requete = "SELECT Id,Date,Conso,Debit FROM `Eau` WHERE Electrovanne='$_GET[Debit]'; ";
 }
 
 else if (isset($_GET['Date']))
 {
-    $requete = "SELECT * FROM `Eau` WHERE Electrovanne='$_GET[Date]'; ";
+    $requete = "SELECT Id,Date,Conso,Debit FROM `Eau` WHERE Electrovanne='$_GET[Date]'; ";
 }
 
 else
 {
-    $requete = "SELECT * FROM Eau;"; //Requéte général
+    $requete = "SELECT Id,Date,Conso,Debit FROM Eau;"; //Requéte général
 }
 
 $reçu = $base_donne->query($requete);
@@ -51,16 +51,17 @@ $reçu = $base_donne->query($requete);
 
 
 if($reçu->num_rows>0)  //Si on reçoit quelle que chose
-{
-    while($resultat[$i]=$reçu->fetch_assoc())
-    {
-        $i++;
-    }
-}
-else
-{
-    $resultat=NULL;
-}
+        {
+            while($ligne=$reçu->fetch_assoc())
+            {
+                $resultat[]=$ligne;
+            }
+        }
+        else
+        {
+            $resultat=NULL;
+        }
+        
 
 $base_donne->close();
 ?>

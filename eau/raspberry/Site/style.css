@@ -120,7 +120,6 @@ nav ul
 nav li
 {
     margin-right: 15px;
-    float: center;
     color : #FFFFFF;
 }
 
@@ -130,7 +129,7 @@ nav a
     color: #FFFFFF;
     padding: 9px 8px 17px 8px;
     text-decoration: none;
-    float: center;
+    
 }
 
 nav a:hover

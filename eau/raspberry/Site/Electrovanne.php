@@ -15,12 +15,12 @@
       </entete>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <body>
-
+ 
 <?php
 $ip="127.0.0.1";       //@ IP du serveur, ici localhost
-$utilisateur="api";     //Nom d'utilisateur de la base de donnée
-$mot_de_passe="snir";     // Mot de passe de la base de donnée
-$base_de_donne="Projet";   //Nom de la base de donnée
+$utilisateur="root";     //Nom d'utilisateur de la base de donnée
+$mot_de_passe="";     // Mot de passe de la base de donnée
+$base_de_donne="projet";   //Nom de la base de donnée
 $i=1;
 
 
@@ -33,24 +33,24 @@ if($base_donne->connect_error==true)   // test la connection
 echo "Echec de la connexion: ".$base_donne->connect_error;   //message d'erreur
 }
 
-    $requete = "SELECT Date, Electrovanne FROM `Eau` ;"; 
+    $requete = "SELECT Date, Electrovanne FROM `eau` ;"; 
 
 $reçu = $base_donne->query($requete);
 
 
 
 if($reçu->num_rows>0)  //Si on reçoit quelle que chose
-{
-    while($resultat[$i]=$reçu->fetch_assoc())
-    {
-        $i++;
-    }
-}
-else
-{
-    $resultat=NULL;
-}
-$base_donne->close();
+        {
+            while($ligne=$reçu->fetch_assoc())
+            {
+                $resultat[]=$ligne;
+            }
+        }
+        else
+        {
+            $resultat=NULL;
+        }
+        $base_donne->close();
 ?>
 
 
@@ -113,8 +113,8 @@ function envoiMqtt()
   <span class="slider round"></span>
   </p></topic>
 </label>
-    <p> L'état OFF correspond à un circuit ouvert l'eau ne peut pas passer. <br>
-    L'état ON correspond à un circuit fermé l'eau peut passer. </p></topic>
+    <p> L'état OFF correspond à un circuit ouvert: l'eau ne peut pas passer. <br>
+    L'état ON correspond à un circuit fermé: l'eau peut passer. </p></topic>
     </agir>
     <historique>
       <h2> Historique de l'état de l'électrovanne </h2>
@@ -132,6 +132,7 @@ function envoiMqtt()
             echo "<td>".$value."</td>" ;
           }
       echo "</tr>";
+
       }  
       ?> 
   </historique>

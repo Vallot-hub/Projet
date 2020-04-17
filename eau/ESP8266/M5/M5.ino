@@ -10,7 +10,7 @@ const char* ssid     = "Livebox-3002";
 const char* password = "aSzy24ZzWm5xrKrumG"; 
 
 // mqtt
-const char* mqtt_host = "90.3.11.137";
+const char* mqtt_host = "90.3.16.36";
 const int mqtt_port = 1883;
 
 //const char* mqttUser = ""; 
@@ -97,6 +97,8 @@ void callback(char* topic, byte* payload, unsigned int length)   //rappel
       M5.Lcd.println("circuit ouvert");
     }
     delay(1000);
+    M5.Lcd.fillScreen(TFT_BLACK); //efface l'écrant
+    M5.Lcd.setTextColor(WHITE, BLACK);
     menu();
     
   }
@@ -166,23 +168,24 @@ void loop()
   
     //Serial.println(compt);
     
-    for(int i = 0; i<20 ;i++)
+    for(int i = 0; i<200 ;i++)
    {
     M5.update();
     Mqtt_client.loop();
-    delay(20);
+    delay(50);
     if(M5.BtnB.wasPressed())
     {
+      M5.Lcd.fillScreen(TFT_BLACK); //efface l'écrant
       if (n_menu>0)
       {
         n_menu=0;  
       }
       else
       {
-      n_menu++;
+        n_menu++;
       }
-      menu();
     }
+    menu();
     if(M5.BtnA.wasPressed())
     {
       
@@ -291,7 +294,6 @@ void envoi_message()
 }
 void menu()
 {
-  M5.Lcd.fillScreen(TFT_BLACK); //efface l'écrant
   switch(n_menu)
   {
     case 0:
@@ -300,14 +302,11 @@ void menu()
     case 1:
     menu_conn();
     break;
-    
-    
   }
 }
 
 void menu_info()
 {
-  M5.Lcd.setTextColor(WHITE, BLACK);
   M5.Lcd.setCursor(0, 0, 2);
   M5.Lcd.print("Consommation : ");
   M5.Lcd.println(compt);
@@ -320,7 +319,6 @@ void menu_info()
 
 void menu_conn()
 {
-  M5.Lcd.setTextColor(WHITE, BLACK);
   M5.Lcd.setCursor(0, 0, 2);
   M5.Lcd.print("WiFi : ");
   M5.Lcd.println("OK");

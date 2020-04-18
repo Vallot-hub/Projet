@@ -1,5 +1,6 @@
 <!DOCTYPE html> <html>
     <head>
+    <link rel="icon" href="icone.ico" />
         <meta charset="utf-8" />
         <title> Interface web du compteur connecté </title>
          <link rel="stylesheet" href="style.css" />
@@ -13,5 +14,5 @@
                     </ul>
             <h1> Bienvenue sur l'interface web de votre compteur d'eau connecté </h1>
         </entete>
-     
+        </html>
 

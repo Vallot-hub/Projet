@@ -10,7 +10,7 @@ const char* ssid     = "Livebox-3002";
 const char* password = "aSzy24ZzWm5xrKrumG"; 
 
 // mqtt
-const char* mqtt_host = "90.3.16.36";
+const char* mqtt_host = "86.252.154.246";
 const int mqtt_port = 1883;
 
 //const char* mqttUser = ""; 
@@ -83,7 +83,11 @@ void callback(char* topic, byte* payload, unsigned int length)   //rappel
     if (msgString == "1")
     {
       ouverture_electrovanne();  
-      envoi_message();        //envoi un message de confirmation
+      char envoi[10]="";
+      String msg = "";
+      msg = String(Etat_electrovanne);
+      msg.toCharArray(envoi,5);
+      Mqtt_client.publish("envoi/electrovanne", envoi);  //envoi un message de confirmation
       M5.Lcd.setTextColor(WHITE, BLUE);
       M5.Lcd.fillScreen(BLUE);
       M5.Lcd.println("circuit ferme"); 
@@ -91,7 +95,11 @@ void callback(char* topic, byte* payload, unsigned int length)   //rappel
     if (msgString == "0")
     {
       fermeture_electrovanne();
-      envoi_message();   //envoi un message de confirmation
+      char envoi[10]="";
+      String msg = "";
+      msg = String(Etat_electrovanne);
+      msg.toCharArray(envoi,5);
+      Mqtt_client.publish("envoi/electrovanne", envoi);  //envoi un message de confirmation
       M5.Lcd.setTextColor(WHITE, RED);
       M5.Lcd.fillScreen(RED);
       M5.Lcd.println("circuit ouvert");
@@ -134,20 +142,7 @@ void setup()
   
   M5.Lcd.fillScreen(TFT_BLACK);
   Serial.println("Connectée au réseau WiFi");
-  //M5.Lcd.println()
   
-  //M5.Lcd.drawChar(0, 0, chaine[0], 0xF800, 0,255,160);
- 
-
-
-  
-  //M5.Lcd.drawJpg("/IMG_20191213_120859 bis.jpg",  100, 0, 0);
-  //M5.Lcd.println("hello world !!!! ");
-  //M5.Lcd.fillScreen(TFT_BLACK);
-  //M5.Lcd.print(WiFi.localIP());
-  
-  
-  //client.setServer(mqttServer, mqttPort);   //definition du server Mqtt
   Mqtt_client.setCallback(callback);   //defini la fonction de retour
 
 /** connection au broker Mqtt**/
@@ -165,7 +160,6 @@ void setup()
 
 void loop() 
 {
-  
     //Serial.println(compt);
     
     for(int i = 0; i<200 ;i++)
@@ -275,13 +269,10 @@ void envoi_message()
   msg.toCharArray(temp,5);
   strcat(envoi,temp);
   strcat(envoi,":");//ajoute une donneee à la fin du char envoi
-  msg = String(Etat_electrovanne);
-  msg.toCharArray(temp,5);
+
   
-  strcat(envoi,temp);
   msg=String(debit);
   msg.toCharArray(temp,5);
-  strcat(envoi,":");  //ajoute une donneee à la fin du char envoi
   strcat(envoi,temp);
   Serial.println(envoi);
 
@@ -290,7 +281,7 @@ void envoi_message()
 //............................nb_litre : etat_electrovanne : debit sur 10s.........................//
   
 
-  Mqtt_client.publish("compteur_connecte/conso", envoi);
+  Mqtt_client.publish("envoi/conso", envoi);
 }
 void menu()
 {

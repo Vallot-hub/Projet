@@ -106,7 +106,7 @@ h2
 /* Navigation */
 nav ul
 {
-    background: linear-gradient(deepskyblue, dodgerblue);
+    background: linear-gradient(deepskyblue, dodgerblue);  /* couleur du fond */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -119,8 +119,8 @@ nav ul
 
 nav li
 {
-    margin-right: 15px;
-    color : #FFFFFF;
+    margin-right: 15px;  /** espacement entre les boutons du menu */
+    color : #FFFFFF;  /** couleur du texte */
 }
 
 nav a

@@ -1,6 +1,6 @@
 <!DOCTYPE html> <html>
     <head>
-        <link rel="icon" href="icone.ico" />
+    <link rel="icon" href="icone.ico" />
         <meta charset="utf-8" />
         <title> Interface web du compteur connecté </title>
          <link rel="stylesheet" href="style.css" />
@@ -28,15 +28,18 @@
         /** fonction d'envoie des dates en ajax */
         function db()
         {
+            var DateFin = document.getElementById("fin").value;
+            var DateDebut = document.getElementById("debut").value;
+
             /**  change les valeurs de bloquage des dates */
-            document.getElementById("debut").max = document.getElementById("fin").value;
-            document.getElementById("fin").min = document.getElementById("debut").value;
+            document.getElementById("debut").max = DateFin;
+            document.getElementById("fin").min = DateDebut;
             $.post(
                 'db_site.php', // script PHP
                 {
                     /** paramétre POST les dates */
-                    debut : document.getElementById('debut').value, 
-                    fin : document.getElementById('fin').value
+                    debut : DateDebut, 
+                    fin : DateFin
                 },
 
             function(data)
@@ -44,13 +47,22 @@
                 var abs = new Array();  // tableau comptenant les données en bas (la date)
                 var ord = new Array();  // tableau comptenant les valeurs corespondant aux dates (Consommation)
                 var ar = JSON.parse(data);   //récupere les donnes de la base de données encodé en json
-                /** remplie les tableaux de données */
-                for (var i=0; i < ar.length; i++)
+                //alert(data);
+                if (data!='null')
                 {
-                    abs[i]=ar[i].Date;
-                    ord[i]=ar[i].Conso;
+                    document.getElementById('erreur').style.display="none";  //masque le message d'erreur
+                    /** remplie les tableaux de données */
+                    for (var i=0; i < ar.length; i++)
+                    {
+                        abs[i]=ar[i].Date;
+                        ord[i]=ar[i].Conso;
+                    }
+                    up_grafike(abs, ord);  // met à jour le graphique
                 }
-                up_grafike(abs, ord);  // met à jour le graphique
+                else
+                {
+                    document.getElementById('erreur').style.display="block";
+                }
             },
             'text'
             );
@@ -64,7 +76,6 @@
 </script>
 
 <div id="conteneur">
-
     <recap>
         <h2> Paramètre du graphique </h2>
 
@@ -78,11 +89,11 @@
         <?php
             echo "<input type='date' id='fin' name='fin' value='".$date_fin."' onChange='db()' min='".$date_debut."'>";   //met au demarrage de la page la date d'aujourd'hui et bloque les dates inferieur a la date du debut 
         ?>
-
+        <br><p id="erreur" style="display:none">Pas de donnée pour les dates sélectionnées</p>
 
     </recap>
     <graphique>
-        <h2> Graphique de la consommation</h2>
+        <h2 id="titre_grafike"> Graphique de la consommation </h2>
         <canvas id="graphe"></canvas>
 
     </graphique>
@@ -97,11 +108,7 @@ $utilisateur="api";     //Nom d'utilisateur de la base de donnée
 $mot_de_passe="snir";     // Mot de passe de la base de donnée
 $base_de_donne="Projet";   //Nom de la base de donnée
 
-
-
-
 $base_donne = new mysqli($ip,$utilisateur,$mot_de_passe,$base_de_donne);   //connection a la base de donnée
-
 
 if($base_donne->connect_error==true)   // test la connection
 {

@@ -16,34 +16,35 @@ echo "Echec de la connexion: ".$base_donne->connect_error;   //message d'erreur
 }
 
 
-if (isset($_GET['Id']))   //Regarde le comptenue de la variable GET. Si vide lit toute la base de donnée
+if (isset($_POST['Id']))   //Regarde le comptenue de la variable GET. Si vide lit toute la base de donnée
 {
-    $requete = "SELECT Id,Date,Conso,Debit FROM `Eau` WHERE Id='$_GET[Id]'; ";
+    $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Id='$_POST[Id]'; ";
 
 }
-else if (isset($_GET['Conso']))
+else if (isset($_POST['Conso']))
 {
-    $requete = "SELECT Id,Date,Conso,Debit FROM `Eau` WHERE Conso='$_GET[Conso]'; ";
+    $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Conso='$_POST[Conso]'; ";
 }
 
-else if (isset($_GET['Electrovanne']))
+else if (isset($_POST['Electrovanne']))
 {
-    $requete = "SELECT Id,Date,Conso,Debit FROM `Eau` WHERE Electrovanne='$_GET[Electrovanne]'; ";
+    $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Electrovanne='$_POST[Electrovanne]'; ";
 }
 
-else if (isset($_GET['Debit']))
+else if (isset($_POST['Debit']))
 {
-    $requete = "SELECT Id,Date,Conso,Debit FROM `Eau` WHERE Electrovanne='$_GET[Debit]'; ";
+    $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Electrovanne='$_POST[Debit]'; ";
 }
 
 else if (isset($_POST['Date']))
 {
-    $requete = "SELECT Id,Date,Conso,Debit FROM `Eau` WHERE Date='$_POST[Date]'; ";
+    $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Date='$_POST[Date]'; ";
 }
 
 else
 {
-    $requete = "SELECT Id,Date,Conso,Debit FROM Eau;"; //Requéte général
+    $requete = "SELECT Id,Consommation,Debit,Date FROM Eau;";   //renvoie toute les valeurs de l'api
+    //$requete = "SELECT Id,Date,Consommation,Debit FROM Eau ORDER BY id DESC LIMIT 0,1;";   //renvoie la derniere entrée dans la base de donnée
 }
 
 $reçu = $base_donne->query($requete);

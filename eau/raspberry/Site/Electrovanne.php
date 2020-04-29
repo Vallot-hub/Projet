@@ -57,7 +57,7 @@ if($reçu->num_rows>0)  //Si on reçoit quelle que chose
 
   $base_donne->close();
   
-  $resultat=array_reverse($resultat);  //inversement lecture de la base de donnée en sens inverse
+  $resultat=array_reverse($resultat);  //inversement des données (lecture de la base de donnée en sens inverse)
     /** Fin de la connection à la base de donnée **/
 ?>
 
@@ -177,7 +177,7 @@ function envoiMqtt()
   </historique>
 </div>
 
-<!-- permet de gérer de donner la position initial du boutons slide  -->
+<!-- permet de gérer la position initial du bouton slide  -->
 <script type="text/javascript">  
     var etat = <?php echo $value; ?>;  //php envoi la valeur de l'état de l'electrovanne
         if (etat == 1)

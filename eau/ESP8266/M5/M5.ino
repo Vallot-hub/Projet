@@ -10,7 +10,7 @@ const char* ssid     = "Livebox-3002";
 const char* password = "aSzy24ZzWm5xrKrumG"; 
 
 // mqtt
-const char* mqtt_host = "86.252.154.246";
+const char* mqtt_host = "86.252.153.65";
 const int mqtt_port = 1883;
 
 //const char* mqttUser = ""; 
@@ -242,12 +242,16 @@ void connection_Mqtt()
         int etat=Mqtt_client.state();
         Serial.print("Erreur au niveau : ");  // affiche l'erreur 
         Serial.println(etat);   // info debloquage + ln=retour à la ligne
+        M5.Lcd.fillScreen(TFT_BLACK); //efface l'écrant
         M5.Lcd.setCursor(0, 0, 2);
         M5.Lcd.print("Erreur Mqtt : ");
         M5.Lcd.println(etat);
         delay(2000);  //  attend 2000ms=2s
-      } 
+   
+      }
+      M5.Lcd.fillScreen(TFT_BLACK); //efface l'écrant 
     }
+     
 }
 
 

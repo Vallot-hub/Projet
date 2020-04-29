@@ -23,7 +23,7 @@ if ($_POST['Etat']==0)
    connectionMqtt("0");
 }
 
-sleep ( 1 );
+sleep ( 2 );
 /** Connection à la base de donnée **/
 $ip="127.0.0.1";       //@ IP du serveur, ici localhost
 $utilisateur="api";     //Nom d'utilisateur de la base de donnée

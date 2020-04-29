@@ -19,11 +19,11 @@ echo "Echec de la connexion: ".$base_donne->connect_error;   //message d'erreur
 if (isset($_POST['Id']))   //Regarde le comptenue de la variable GET. Si vide lit toute la base de donnée
 {
     $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Id='$_POST[Id]'; ";
-
 }
-else if (isset($_POST['Conso']))
+
+else if (isset($_POST['Consommation']))
 {
-    $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Conso='$_POST[Conso]'; ";
+    $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Consommation='$_POST[Consommation]'; ";
 }
 
 else if (isset($_POST['Electrovanne']))
@@ -39,6 +39,11 @@ else if (isset($_POST['Debit']))
 else if (isset($_POST['Date']))
 {
     $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Date='$_POST[Date]'; ";
+}
+
+else if (isset($_POST['DerniereValeur']))
+{
+    $requete = "SELECT Electrovanne FROM `Electrovanne` ORDER BY Id_electrovanne DESC LIMIT 0,1; ";
 }
 
 else

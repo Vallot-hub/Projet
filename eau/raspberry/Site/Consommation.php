@@ -50,7 +50,7 @@
                 //alert(data);
                 if (data!='null')
                 {
-                    document.getElementById('erreur').style.display="none";  //masque le message d'erreur
+                    document.getElementById('erreur').style.display="none";  //masque le message d'erreur sous la date
                     /** remplie les tableaux de données */
                     for (var i=0; i < ar.length; i++)
                     {

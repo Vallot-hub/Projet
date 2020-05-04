@@ -10,7 +10,7 @@ const char* ssid     = "Livebox-3002";   //nom du point d'acces wifi
 const char* password = "aSzy24ZzWm5xrKrumG";   // mot de passe du wifi
 
 // mqtt
-const char* mqtt_host = "86.252.153.65";    // Addresse du Broker Mqtt
+const char* mqtt_host = "90.3.8.46";    // Addresse du Broker Mqtt
 const int mqtt_port = 1883;    // numero de port de la liaison Mqtt
 
 //const char* mqttUser = ""; 

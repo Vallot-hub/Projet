@@ -10,7 +10,7 @@ const char* ssid     = "Livebox-3002";   //nom du point d'acces wifi
 const char* password = "aSzy24ZzWm5xrKrumG";   // mot de passe du wifi
 
 // mqtt
-const char* mqtt_host = "90.3.8.46";    // Addresse du Broker Mqtt
+const char* mqtt_host = "86.252.162.139";    // Addresse du Broker Mqtt
 const int mqtt_port = 1883;    // numero de port de la liaison Mqtt
 
 //const char* mqttUser = ""; 
@@ -223,9 +223,15 @@ float calcul_debit(int litre, float temps)
 
 
 void connexion_Mqtt()
-{
-       while (!Mqtt_client.connected()) // tant que le client n'est pas connecté
+{ 
+  while (!Mqtt_client.connected()) // tant que le client n'est pas connecté
     {
+        int etat=Mqtt_client.state();
+        Serial.print("Erreur au niveau : ");  // affiche l'erreur 
+        Serial.println(etat);   // info debloquage + ln=retour à la ligne
+        M5.Lcd.setCursor(0, 0, 2);   //Curceur en haut à gauche et de taille 2
+        M5.Lcd.print("Erreur Mqtt : ");     // affiche du texte
+        M5.Lcd.println(etat);   // affiche le type d'erreur sous forme de chiffre
       if (Mqtt_client.connect("ESP8266Client"))   //  connection au broker Mqtt  
       {
         Serial.println("connectée au serveur mqtt");  // affiche par l'USB que l'on est connecté
@@ -233,15 +239,7 @@ void connexion_Mqtt()
       } 
       else                        // si non 
       {
-        int etat=Mqtt_client.state();
-        Serial.print("Erreur au niveau : ");  // affiche l'erreur 
-        Serial.println(etat);   // info debloquage + ln=retour à la ligne
-        M5.Lcd.fillScreen(TFT_BLACK); //efface l'écrant
-        M5.Lcd.setCursor(0, 0, 2);   //Curceur en haut à gauche et de taille 2
-        M5.Lcd.print("Erreur Mqtt : ");     // affiche du texte
-        M5.Lcd.println(etat);   // affiche le type d'erreur sous forme de chiffre
         delay(2000);  //  attend 2000ms=2s
-   
       }
       M5.Lcd.fillScreen(TFT_BLACK); //efface l'écran 
     }

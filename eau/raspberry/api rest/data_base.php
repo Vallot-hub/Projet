@@ -16,7 +16,7 @@ echo "Echec de la connexion: ".$base_donne->connect_error;   //message d'erreur
 }
 
 
-if (isset($_POST['Id']))   //Regarde le comptenue de la variable GET. Si vide lit toute la base de donnée
+if (isset($_POST['Id']))   //Regarde le comptenue de la variable POST. Si vide lit toute la base de donnée
 {
     $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Id='$_POST[Id]'; ";
 }
@@ -36,9 +36,14 @@ else if (isset($_POST['Debit']))
     $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Electrovanne='$_POST[Debit]'; ";
 }
 
-else if (isset($_POST['Date']))
+else if (isset($_POST['jour_date']))
 {
-    $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Date='$_POST[Date]'; ";
+    $requete = "SELECT Id,Consommation,Debit,Date FROM `Eau` WHERE Date='$_POST[jour_date]'; ";
+}
+
+else if (isset($_POST['date_fin']) && isset($_POST['date_debut']))
+{
+    $requete = "SELECT Date, Conso FROM `Test` WHERE Date>='".$_POST['date_debut']."' AND Date<='".$_POST['date_fin']."'";
 }
 
 else if (isset($_POST['DerniereValeur']))
@@ -46,10 +51,17 @@ else if (isset($_POST['DerniereValeur']))
     $requete = "SELECT Electrovanne FROM `Electrovanne` ORDER BY Id_electrovanne DESC LIMIT 0,1; ";
 }
 
+
+else if (isset($_POST['nb_valeur']))
+{
+    $requete = "SELECT Id,Date,Consommation,Debit FROM Eau ORDER BY id DESC LIMIT 0,".$_POST['nb_valeur'];
+}
+
+
 else
 {
-    $requete = "SELECT Id,Consommation,Debit,Date FROM Eau;";   //renvoie toute les valeurs de l'api
-    //$requete = "SELECT Id,Date,Consommation,Debit FROM Eau ORDER BY id DESC LIMIT 0,1;";   //renvoie la derniere entrée dans la base de donnée
+    //$requete = "SELECT Id,Consommation,Debit,Date FROM Eau;";   //renvoie toute les valeurs de l'api
+    $requete = "SELECT Id,Date,Consommation,Debit FROM Eau ORDER BY id DESC LIMIT 0,1;";   //renvoie la derniere entrée dans la base de donnée
 }
 
 $reçu = $base_donne->query($requete);
@@ -68,6 +80,11 @@ if($reçu->num_rows>0)  //Si on reçoit quelle que chose
         
 
 $base_donne->close();
+
+/*if (isset($_POST['nb_valeur']))
+{
+
+}*/
 ?>
 
 

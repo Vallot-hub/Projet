@@ -1,5 +1,5 @@
 <?php
-//phpinfo(INFO_MODULES);
+//phpinfo(INFO_MODULES);   //debug verification
 
 use Mosquitto\Client;
 
@@ -8,13 +8,14 @@ function connectionMqtt($message)
 
 define('BROKER', '127.0.0.1');
 define('PORT', 1883);
-define('CLIENT_ID', "pubclient_" + getmypid());
+define('CLIENT_ID', "pubclient_PHP";
 
 $client = new Mosquitto\Client(CLIENT_ID);
-$client->connect(BROKER, PORT, 60);
-$client->publish('gestion', $message, 0, false);
+$client->connect(BROKER, PORT);
+$client->publish('gestion', $message, 0);
+//////////////////topic/////message//Qos//
 }
-//echo htmlspecialchars($_POST['Etat_electrovanne']);
+
 
 
 if (isset($_POST['Etat_electrovanne']))
@@ -23,7 +24,7 @@ if (isset($_POST['Etat_electrovanne']))
         if ($_POST['Etat_electrovanne']==1)
         {
                 $message = "1";
-                //echo "ok -1";
+                //echo "ok -1";   //debug
                 connectionMqtt($message);
 
         }
@@ -31,8 +32,11 @@ if (isset($_POST['Etat_electrovanne']))
         {
 
                 $message = "0";
-                //echo "ok -0";
+                //echo "ok -0";   //debug
                 connectionMqtt($message);
         }
 }
 ?>
+
+
+
